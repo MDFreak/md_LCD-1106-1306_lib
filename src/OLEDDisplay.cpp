@@ -35,10 +35,12 @@
   * - Finish _putc with drawLogBuffer when running display
   */
 
+//#ifdef USE_OLED
 #include "OLEDDisplay.h"
+//#endif
 
-OLEDDisplay::OLEDDisplay() {
-
+OLEDDisplay::OLEDDisplay()
+{
 	displayWidth = 128;
 	displayHeight = 64;
 	displayBufferSize = displayWidth * displayHeight / 8;
