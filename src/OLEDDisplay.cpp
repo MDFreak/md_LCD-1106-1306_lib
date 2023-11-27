@@ -36,7 +36,7 @@
   */
 
 //#ifdef USE_OLED
-#include "OLEDDisplay.h"
+#include <OLEDDisplay.h>
 //#endif
 
 OLEDDisplay::OLEDDisplay()
