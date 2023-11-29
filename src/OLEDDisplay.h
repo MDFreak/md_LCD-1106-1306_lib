@@ -65,9 +65,9 @@
       #define DEBUG_OLEDDISPLAY(...)
     #endif
   // Use DOUBLE BUFFERING by default
-  #ifndef OLEDDISPLAY_REDUCE_MEMORY
-      #define OLEDDISPLAY_DOUBLE_BUFFER
-    #endif
+    #ifndef OLEDDISPLAY_REDUCE_MEMORY
+        #define OLEDDISPLAY_DOUBLE_BUFFER
+      #endif
   // Header Values
     #define JUMPTABLE_BYTES 4
     #define JUMPTABLE_LSB   1
@@ -141,16 +141,15 @@
     char DefaultFontTableLookup(const uint8_t ch);
   // class OLEDDisplay
     #ifdef ARDUINO
-    class OLEDDisplay : public Print
+      class OLEDDisplay : public Print
       {
-        #else // __MBED__
-        class OLEDDisplay : public Stream
+    #else // __MBED__
+      class OLEDDisplay : public Stream
       {
-        #endif
+    #endif
         public:
         	OLEDDisplay();
           virtual ~OLEDDisplay();
-
         	uint16_t width(void) const { return displayWidth; };
         	uint16_t height(void) const { return displayHeight; };
           // Use this to resume after a deep sleep without resetting the display (what init() would do).
