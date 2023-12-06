@@ -252,6 +252,14 @@
           virtual void display(void) = 0;
           // Clear the local pixel buffer
           void clear(void);
+          // Clear specified area
+          void clearArea(uint16_t x, uint16_t y, uint16_t width = 0, uint16_t height = 0);
+          // Clear specified print line
+          void clearLine(uint16_t col, uint16_t row, uint16_t len = 0);
+          // Clear the local pixel buffer user area
+          void clearUser(void);
+          // Clear the local pixel buffer status area
+          void clearStatus(void);
           // Log buffer implementation
           // This will define the lines and characters you can
           // print to the screen. When you exeed the buffer size (lines * chars)
@@ -262,10 +270,14 @@
           // Get screen geometry
           uint16_t getWidth(void);
           uint16_t getHeight(void);
+          uint16_t getRows(void);
+          uint16_t getRowY(uint16_t row);
+          uint16_t getCols(void);
           // Implement needed function to be compatible with Print class
           size_t write(uint8_t c);
           size_t write(const char* s);
-          // Implement needed function to be compatible with Stream class
+          void wrStatus(const String &strUser);
+          void wrText(const String &strUser, uint8_t col, uint8_t row, uint16_t len = 0);
           #ifdef __MBED__
             	int _putc(int c);
             	int _getc() { return -1; };

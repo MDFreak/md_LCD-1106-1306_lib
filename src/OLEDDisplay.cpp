@@ -817,6 +817,46 @@ void OLEDDisplay::clear(void)
   {
     memset(buffer, 0, displayBufferSize);
   }
+void OLEDDisplay::clearArea(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+  {
+    OLEDDISPLAY_COLOR _color = this->color;
+    uint16_t _w = width;
+    uint16_t _h = height;
+    if( _w == 0)  { _w = this->getWidth();  }
+    if( _h == 0)  { _h = this->getHeight(); }
+    this->setColor(BLACK);
+    this->fillRect(x, y, _w, _h);
+    this->display();
+    this->setColor(_color);
+  }
+void OLEDDisplay::clearLine(uint16_t col, uint16_t row, uint16_t len)
+  {
+    uint16_t _x   = 0;
+    uint16_t _y   = 0;
+    uint16_t _w   = this->getWidth();
+    uint16_t _h   = 10;
+      //Serial.printf("OLEDDisplay::wrText  col %d  row %d  rows %d'", col, row, this->getRows()); Serial.print(strUser); Serial.printf("' ... \n");
+    if (col >  1)
+      { _x = (col - 1) * 10; }
+    if (row >  1)
+      { _y = (row - 1) * 10; }
+    if (row > (this->getRows() - 1))
+      {
+        _y = this->getHeight() - 11;
+        _h = 11;
+      }
+    if ((len > 0) && (len < this->getCols()))
+      { _w = len * 10; }
+    this->clearArea(_x, _y, _w, _h);
+  }
+void OLEDDisplay::clearUser(void)
+  {
+    this->clearArea(0, 0, this->getWidth(), this->getHeight() - 10);
+  }
+void OLEDDisplay::clearStatus(void)
+  {
+    this->clearLine(0, this->getRows());
+  }
 void OLEDDisplay::drawLogBuffer(uint16_t xMove, uint16_t yMove)
   {
     uint16_t lineHeight = pgm_read_byte(fontData + HEIGHT_POS);
@@ -859,6 +899,20 @@ uint16_t OLEDDisplay::getWidth(void)
 uint16_t OLEDDisplay::getHeight(void)
   {
     return displayHeight;
+  }
+uint16_t OLEDDisplay::getRows(void)
+  {
+    return displayHeight / 10;
+  }
+uint16_t OLEDDisplay::getCols(void)
+  {
+    return displayWidth / 10;
+  }
+uint16_t OLEDDisplay::getRowY(uint16_t row)
+  {
+    if ((row > 0) && (row < getRows() ))
+         { return (row - 1) * 10; }
+    else { return getRows();      }
   }
 bool OLEDDisplay::setLogBuffer(uint16_t lines, uint16_t chars)
   {
@@ -950,6 +1004,26 @@ size_t OLEDDisplay::write(const char* str)
         write(str[i]);
       }
     return length;
+  }
+void OLEDDisplay::wrStatus(const String &strUser)
+  {
+    //Serial.printf("OLEDDisplay::wrStatus "); Serial.print(strUser); Serial.printf(" ... \n");
+    this->wrText(strUser, 1, this->getRows());
+  }
+void OLEDDisplay::wrText(const String &strUser, uint8_t col, uint8_t row, uint16_t len)
+  {
+    uint8_t* actFont = (uint8_t*) this->fontData;
+    uint16_t _x      = 0;
+    uint16_t _y      = 0;
+    //Serial.printf("OLEDDisplay::wrText  col %d  row %d  rows %d'", col, row, this->getRows()); Serial.print(strUser); Serial.printf("' ... \n");
+    this->clearLine(col, row, len);
+    this->setFont(ArialMT_Plain_10);
+    if (col >  1)                    { _x = (col - 1) * 10; }
+    if (row >  1)                    { _y = (row - 1) * 10; }
+    if (row > (this->getRows() - 1)) { _y = this->getHeight() - 11; }
+    //Serial.printf("OLEDDisplay::wrText  _x %d  _y %d '", _x, _y); Serial.print(strUser); Serial.printf("' ... \n");
+    this->drawString(_x, _y, strUser); this->display();
+    this->fontData = actFont;
   }
 #ifdef __MBED__
     int OLEDDisplay::_putc(int c)
